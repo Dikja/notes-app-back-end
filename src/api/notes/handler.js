@@ -1,7 +1,8 @@
 /* eslint-disable no-underscore-dangle */
 class NotesHandler {
-  constructor(service) {
+  constructor(service, validator) {
     this._service = service;
+    this._validator = validator;
     this.postNoteHandler = this.postNoteHandler.bind(this);
     this.getNotesHandler = this.getNotesHandler.bind(this);
     this.getNoteByIdHandler = this.getNoteByIdHandler.bind(this);
@@ -12,7 +13,9 @@ class NotesHandler {
   // Menambahkan catatan
   postNoteHandler(request, h) {
     try {
-      const { title = 'ununtitled', tags, body } = request.payload;
+      this._validator.validateNotePayload(request.payload);
+
+      const { title = 'untitled', tags, body } = request.payload;
 
       const noteId = this._service.addNote({ title, tags, body });
 
@@ -28,7 +31,7 @@ class NotesHandler {
     } catch (error) {
       const response = h.response({
         status: 'fail',
-        message: Error.message,
+        message: error.message,
       });
       response.code(400);
       return response;
@@ -74,6 +77,8 @@ class NotesHandler {
   // memperbarui Catatan
   putNoteByIdHandler(request, h) {
     try {
+      this._validator.validateNotePayload(request.payload);
+
       const { id } = request.params;
 
       this._service.editNoteById(id, request.payload);
@@ -87,7 +92,7 @@ class NotesHandler {
         status: 'fail',
         message: error.message,
       });
-      response.code(404);
+      response.code(400);
       return response;
     }
   }
