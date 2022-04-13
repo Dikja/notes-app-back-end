@@ -64,7 +64,7 @@ class NotesHandler {
     } catch (error) {
       const response = h.response({
         status: 'fail',
-        message: Error.message,
+        message: error.message,
       });
       response.code(404);
       return response;
