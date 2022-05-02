@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 require('dotenv').config();
 
 const Hapi = require('@hapi/hapi');
@@ -6,13 +7,16 @@ const authentications = require('./api/authentications');
 const notes = require('./api/notes');
 const users = require('./api/users');
 const collaborations = require('./api/collaborations');
+const _exports = require('./api/exports');
 const AuthenticationsService = require('./services/postgras/AuthenticationsService');
 const NotesService = require('./services/postgras/NotesService');
 const UsersService = require('./services/postgras/UsersService');
 const CollaborationsService = require('./services/postgras/CollaborationsService');
+const ProducerService = require('./services/rabbitmq/ProducerService');
 const NotesValidator = require('./validator/notes');
 const UsersValidator = require('./validator/users');
 const AuthenticationsValidator = require('./validator/authentication');
+const ExportsValidator = require('./validator/exports');
 const TokenManager = require('./api/tokenize/TokenManajer');
 const CollaborationsValidator = require('./validator/Collaborations');
 
@@ -85,6 +89,14 @@ const init = async () => {
         notesService,
         validator: CollaborationsValidator,
       },
+    },
+    {
+      plugin: _exports,
+      options: {
+        service: ProducerService,
+        validator: ExportsValidator,
+      },
+
     },
   ]);
 
