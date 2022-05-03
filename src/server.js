@@ -24,10 +24,12 @@ const ExportsValidator = require('./validator/exports');
 const TokenManager = require('./api/tokenize/TokenManajer');
 const CollaborationsValidator = require('./validator/Collaborations');
 const UploadsValidator = require('./validator/uploads');
+const CacheService = require('./services/redis/CacheService');
 
 const init = async () => {
-  const collaborationService = new CollaborationsService();
-  const notesService = new NotesService(collaborationService);
+  const cacheService = new CacheService();
+  const collaborationService = new CollaborationsService(cacheService);
+  const notesService = new NotesService(collaborationService, cacheService);
   const usersService = new UsersService();
   const authenticationService = new AuthenticationsService();
   const storageService = new StorageService(path.resolve(__dirname, 'api/uploads/file/images'));
