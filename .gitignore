@@ -1,3 +1,5 @@
 node_modules
 git commit -m "restructure with hapi plugin"
 .env
+
+src/api/uploads/file
